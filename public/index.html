@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RECoin Market</title>
+  <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel=stylesheet href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.0/css/bulma.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style type="text/css">
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #f3f3f3;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+      font-size: .7em;
+      color: #a0a0a0;
+    }
+
+    .areaM {
+      fill: rgba(0, 160, 233, 0.7);
+    }
+
+    .memtipPoints {
+      stroke: white;
+      stroke-width: 2px;
+      opacity: 0;
+      fill: #00a0e9;
+    }
+
+    .tipDot {
+      stroke: black;
+      stroke-width: 0.5px;
+    }
+    .areaR {
+    fill: rgba(0, 160, 233, 0.2);
+}
+
+.areaW {
+    fill: none;
+    stroke: rgba(0, 160, 233, 1);
+    stroke-width: 2px;
+}
+
+input[type="range"] {
+  display: block;
+  width: 100%;
+}
+.svg-container {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  padding-bottom: 50%;
+  vertical-align: top;
+  overflow: hidden;
+}
+
+#svg-disk {
+  display: inline-block;
+  position: absolute;
+  top: 10px;
+  left: 0;
+}
+
+  </style>
+</head>
+<body>
+  <div id="app">
+    <section class="hero">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title has-text-centered">RECoin Market</h1>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+        <div class="tile is-ancestor">
+          <div class="tile is-parent is-8">
+            <div class="tile is-child">
+              <div id="chart"></div>
+            </div>
+          </div>
+          <div class="tile is-parent is-vertical">
+            <div class="tile is-child">
+              <div class="card">
+                <header class="card-header">
+                  <p class="card-header-title">
+                    Become a RECoin miner
+                  </p>
+                  <a class="card-header-icon">
+                    <span class="icon">
+                      <i class="fa fa-car"></i>
+                    </span>
+                  </a>
+                </header>
+                <div class="card-content">
+                  <div class="content">
+                    Buy an electric vehicle now and make ${{ Number(Math.round(rPrice*10000+'e'+2)+'e-'+2) }}/year
+                  </div>
+                </div>
+                <footer class="card-footer">
+                  <a class="card-footer-item" v-on:click="buyCar">Buy</a>
+                  <a class="card-footer-item">No Thanks</a>
+                </footer>
+              </div>
+            </div>
+            <div class="tile is-child">
+              <div class="card">
+                <header class="card-header">
+                  <p class="card-header-title">
+                    Become an Offsetter
+                  </p>
+                  <a class="card-header-icon">
+                    <span class="icon">
+                      <i class="fa fa-child"></i>
+                    </span>
+                  </a>
+                </header>
+                <div class="card-content">
+                  <div class="content">
+                    Automatically offset your Uber rides for $0.25/ride
+                  </div>
+                </div>
+                <footer class="card-footer">
+                  <a class="card-footer-item" v-on:click="enroll">Enroll</a>
+                  <a class="card-footer-item">No Thanks</a>
+                </footer>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="columns">
+          <div class="column has-text-centered">
+            <div>
+              <p class="heading">RECoin Price</p>
+              <p class="title">${{ Number(Math.round(rPrice+'e'+6)+'e-'+6) }}</p>
+            </div>
+          </div>
+          <div class="column has-text-centered">
+            <div>
+              <p class="heading">E.V. Miners</p>
+              <p class="title">{{ miners }}</p>
+            </div>
+          </div>
+          <div class="column has-text-centered">
+            <div>
+              <p class="heading">Offsetters</p>
+              <p class="title">{{ offsetters }}</p>
+            </div>
+            <input type="range" min="700000" max="10000000" v-model.number="offsetters">
+          </div>
+          <div class="column has-text-centered">
+            <div>
+              <p class="heading">Total Recoins issued</p>
+              <p class="title">{{ Number(Math.round(rTotal+'e'+3)+'e-'+3) }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="section" v-if="optIn">
+      <div class="container">
+        <div class="card">
+          <header class="card-header">
+            <p class="card-header-title">
+              Your RECoin balance
+            </p>
+            <a class="card-header-icon" v-on:click="enroll">
+              <span class="icon">
+                <i class="fa fa-times"></i>
+              </span>
+            </a>
+          </header>
+          <div class="card-content">
+            <p class="title">
+              {{ balance }}
+            </p>
+            <p class="subtitle">
+              RECoins
+            </p>
+          </div>
+          <footer class="card-footer">
+          </footer>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="columns">
+          <div class="column">
+            <h1 class="title is-5">Onboard a new company</h1>
+            <button class="button" v-bind:class="{ 'is-danger': uber}" v-on:click="toggleEvent('uber')">Uber</button>
+            <button class="button" v-bind:class="{ 'is-danger': lyft}" v-on:click="toggleEvent('lyft')">Lyft</button>
+            <button class="button" v-bind:class="{ 'is-danger': amazon}" v-on:click="toggleEvent('amazon')">Amazon</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script src="https://d3js.org/d3.v3.js"></script>
+  <script src="https://unpkg.com/vue"></script>
+  <script src="./script.js"></script>
+</body>
+</html>

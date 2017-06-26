@@ -1,0 +1,23 @@
+{
+  "name": "cryptomarket",
+  "version": "1.0.0",
+  "description": "Real time visualization of crypto currency valuation model",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tchardin/cryptomarket.git"
+  },
+  "author": "tdot",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tchardin/cryptomarket/issues"
+  },
+  "homepage": "https://github.com/tchardin/cryptomarket#readme",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
